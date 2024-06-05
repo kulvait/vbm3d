@@ -23,12 +23,12 @@
 void bior_2d_forward(
     Video<float> const& input
 ,   std::vector<float> &output
-,   const unsigned N
-,   const unsigned x
-,   const unsigned y
-,   const unsigned t
-,   const unsigned c
-,   const unsigned d_o
+,   const uint64_t N
+,   const uint64_t x
+,   const uint64_t y
+,   const uint64_t t
+,   const uint64_t c
+,   const uint64_t d_o
 ,   std::vector<float> const& lpd
 ,   std::vector<float> const& hpd
 );
@@ -36,21 +36,21 @@ void bior_2d_forward(
 void bior_2d_forward_test(
     std::vector<float> const& input
 ,   std::vector<float> &output
-,   const unsigned N
-,   const unsigned d_i
-,   const unsigned r_i
-,   const unsigned d_o
+,   const uint64_t N
+,   const uint64_t d_i
+,   const uint64_t r_i
+,   const uint64_t d_o
 ,   std::vector<float> const& lpd
 ,   std::vector<float> const& hpd
 ,   std::vector<float> &tmp
-,   std::vector<unsigned> &ind_per
+,   std::vector<uint64_t> &ind_per
 );
 
 //! Compute a Bior1.5 2D inverse
 void bior_2d_inverse(
     std::vector<float> &signal
-,   const unsigned N
-,   const unsigned d_s
+,   const uint64_t N
+,   const uint64_t d_s
 ,   std::vector<float> const& lpr
 ,   std::vector<float> const& hpr
 );
@@ -67,34 +67,34 @@ void bior15_coef(
 void hadamard_transform(
     std::vector<float> &vec
 ,   std::vector<float> &tmp
-,   const unsigned N
-,   const unsigned d
+,   const uint64_t N
+,   const uint64_t d
 );
 
 void haar_forward(
     std::vector<float> &vec
 ,   std::vector<float> &tmp
-,   const unsigned N
-,   const unsigned d
+,   const uint64_t N
+,   const uint64_t d
 );
 
 void haar_inverse(
     std::vector<float> &vec
 ,   std::vector<float> &tmp
-,   const unsigned N
-,   const unsigned d
+,   const uint64_t N
+,   const uint64_t d
 );
 
 //! Process the log2 of N
-unsigned log2(
-    const unsigned N
+uint64_t log2(
+    const uint64_t N
 );
 
 //! Obtain index for periodic extension
 void per_ext_ind(
-    std::vector<unsigned> &ind_per
-,   const unsigned N
-,   const unsigned L
+    std::vector<uint64_t> &ind_per
+,   const uint64_t N
+,   const uint64_t L
 );
 
 #endif // LIB_TRANSFORMS_INCLUDED

@@ -19,13 +19,13 @@
  * @brief Convenient function to use the sort function provided by the vector library.
  **/
 bool comparaisonFirst(
-	const std::pair<float, unsigned> &i_pair1
-,	const std::pair<float, unsigned> &i_pair2
+	const std::pair<float, uint64_t> &i_pair1
+,	const std::pair<float, uint64_t> &i_pair2
 );
 
 bool comparaisonInverseFirst(
-	const std::pair<float, unsigned> &i_pair1
-,	const std::pair<float, unsigned> &i_pair2
+	const std::pair<float, uint64_t> &i_pair1
+,	const std::pair<float, uint64_t> &i_pair2
 );
 
 /**
@@ -55,8 +55,8 @@ float clip(
 void centerData(
 	std::vector<float> &io_group3d
 ,	std::vector<float> &o_baricenter
-,	const unsigned p_rows
-,	const unsigned p_cols
+,	const uint64_t p_rows
+,	const uint64_t p_cols
 );
 
 /**
@@ -71,9 +71,9 @@ void centerData(
  **/
 float computeStdDeviation(
 	std::vector<float> const& i_Set
-,	const unsigned p_sP
-,	const unsigned p_nSimP
-,	const unsigned p_nChannels
+,	const uint64_t p_sP
+,	const uint64_t p_nSimP
+,	const uint64_t p_nChannels
 );
 
 /**
@@ -86,9 +86,9 @@ float computeStdDeviation(
  * @return none.
  **/
 void determineFactor(
-    const unsigned i_n
-,   unsigned &o_a
-,   unsigned &o_b
+    const uint64_t i_n
+,   uint64_t &o_a
+,   uint64_t &o_b
 );
 
 /**
@@ -118,58 +118,58 @@ int writingMeasures(
 
 //! Check if a number is a power of 2
 bool power_of_2(
-    const unsigned n
+    const uint64_t n
 );
 
 //! Look for the closest power of 2 number
 int closest_power_of_2(
-    const unsigned n
+    const uint64_t n
 );
 
 //! Estimate sigma on each channel according to the choice of the color_space
 int estimate_sigma(
     const float sigma
 ,   std::vector<float> &sigma_table
-,   const unsigned chnls
-,   const unsigned color_space
+,   const uint64_t chnls
+,   const uint64_t color_space
 );
 
 //! Initialize a 2D fftwf_plan with some parameters
 void allocate_plan_2d(
     fftwf_plan* plan
-,   const unsigned N
+,   const uint64_t N
 ,   const fftwf_r2r_kind kind
-,   const unsigned nb
+,   const uint64_t nb
 );
 
 //! Initialize a 1D fftwf_plan with some parameters
 void allocate_plan_1d(
     fftwf_plan* plan
-,   const unsigned N
+,   const uint64_t N
 ,   const fftwf_r2r_kind kind
-,   const unsigned nb
+,   const uint64_t nb
 );
 
 //! Initialize a set of indices
 void ind_initialize(
-    std::vector<unsigned> &ind_set
-,   const unsigned beginning
-,   const unsigned end
-,   const unsigned step
+    std::vector<uint64_t> &ind_set
+,   const uint64_t beginning
+,   const uint64_t end
+,   const uint64_t step
 );
 
 void ind_initialize2(
-    std::vector<unsigned> &ind_set
-,   const unsigned max_size
-,   const unsigned N
-,   const unsigned step
+    std::vector<uint64_t> &ind_set
+,   const uint64_t max_size
+,   const uint64_t N
+,   const uint64_t step
 );
 
 //! For convenience
-unsigned ind_size(
-    const unsigned beginning
-,   const unsigned end
-,   const unsigned step
+uint64_t ind_size(
+    const uint64_t beginning
+,   const uint64_t end
+,   const uint64_t step
 );
 
 

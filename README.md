@@ -3,7 +3,18 @@ IMPLEMENTATION OF THE VIDEO DENOISING ALGORITHM VBM3D
 
 * Author    : EHRET Thibaud <ehret.thibaud@gmail.com>
 * Copyright : (C) 2018 IPOL Image Processing On Line http://www.ipol.im/
-* Licence   : GPL v3+, see gpl.txt
+* Fork by    : Vojtech Kulvait
+* Licence   : GPLv3
+
+
+REASONS TO FORK
+---------------
+
+Original vbm3d code by revision 52f2a43 use uint32_t to index full stack of video frames. In my application that was causing overflow and segmentation fault. I changed all uint32_t to uint64_t to fit larger sequences.
+
+Additionally I improved memory management.
+
+Some cmake fixes were also applied.
 
 OVERVIEW
 --------

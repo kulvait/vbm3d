@@ -539,6 +539,7 @@ static const char *iio_strfmt(int format)
 #undef M
 }
 
+/*
 inline
 static void iio_print_image_info(FILE *f, struct iio_image *x)
 {
@@ -556,7 +557,7 @@ static void iio_print_image_info(FILE *f, struct iio_image *x)
 	fprintf(f, "type = %s\n", iio_strtyp(x->type));
 	fprintf(f, "data = %p\n", (void *)x->data);
 }
-
+*/
 
 static void iio_image_fill(struct iio_image *x,
 		int dimension, int *sizes,
@@ -606,7 +607,7 @@ static void inplace_swap_pixels(struct iio_image *x, int i, int j, int a, int b)
 	if (x->dimension != 2)
 		fail("can only flip 2-dimensional images");
 	int w = x->sizes[0];
-	int h = x->sizes[1];
+	//int h = x->sizes[1];
 	int pixsize = x->pixel_dimension * iio_image_sample_size(x);
 	uint8_t *p = (i + j * w) * pixsize + (uint8_t*)x->data;
 	uint8_t *q = (a + b * w) * pixsize + (uint8_t*)x->data;
@@ -2154,7 +2155,7 @@ static int read_beheaded_pds(struct iio_image *x,
 	int sfmt = SAMPLEFORMAT_UINT;
 	bool in_object = false;
 	bool flip_h = false, flip_v = false, allturn = false;
-	while (n = getlinen(line, nmax, f) && cx++ < nmax)
+	while ((n = getlinen(line, nmax, f)) && cx++ < nmax)
 	{
 		pds_parse_line(key, value, line);
 		if (!*key || !*value) continue;
@@ -2232,7 +2233,7 @@ static int read_beheaded_csv(struct iio_image *x,
 {
 	// load whole file
 	long filesize;
-	uint8_t *filedata = load_rest_of_file(&filesize, fin, header, nheader);
+	char *filedata = load_rest_of_file(&filesize, fin, header, nheader);
 
 	// height = number of newlines
 	int h = 0;
@@ -2353,6 +2354,7 @@ static char *rwa_prefix(const char *f)
 		return NULL;
 	return colon;
 }
+
 
 // explicit raw reader (input = a given block of memory)
 static int parse_raw_binary_image_explicit(struct iio_image *x,

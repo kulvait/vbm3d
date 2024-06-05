@@ -66,7 +66,7 @@ float energy_optic_flow(
 #pragma omp parallel for
 #endif
 	for (int i = 0; i < size; i++)
-		diff[i] = abs(I1w[i] - I0[i]);
+		diff[i] = fabs(I1w[i] - I0[i]);
 	
 	forward_gradient(u1, u1x, u1y, nx ,ny);
 	forward_gradient(u2, u2x, u2y, nx ,ny);
@@ -75,7 +75,7 @@ float energy_optic_flow(
 #pragma omp parallel for reduction(+:energy)
 #endif
 	for(int i = 0; i < size; ++i)
-		energy += abs(u1x[i]) + abs(u1y[i]) + lambda*diff[i];
+		energy += fabs(u1x[i]) + fabs(u1y[i]) + lambda*diff[i];
 	energy /= size;
 
 	free(I1w);

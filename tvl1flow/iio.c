@@ -37,7 +37,7 @@
 
 #ifdef I_CAN_HAS_LIBPNG
 // ugly "feature" in png.h forces this header to be included first
-#  include <png.h>
+#include <png.h>
 #endif
 
 
@@ -49,11 +49,11 @@
 //
 
 #if _POSIX_C_SOURCE >= 200809L
-#  define I_CAN_HAS_FMEMOPEN 1
+#define I_CAN_HAS_FMEMOPEN 1
 #endif
 
 #if _POSIX_C_SOURCE >= 200112L
-#  define I_CAN_HAS_MKSTEMP 1
+#define I_CAN_HAS_MKSTEMP 1
 #endif
 
 //
@@ -148,9 +148,9 @@ typedef long double longdouble;
 // NOTE: libpng has a nasty "feature" whereby you have to include libpng.h
 // before setjmp.h if you want to use both.   This induces the following
 // hackery:
-#  ifndef I_CAN_HAS_LIBPNG
-#    include <setjmp.h>
-#  endif//I_CAN_HAS_LIBPNG
+#ifndef I_CAN_HAS_LIBPNG
+#include <setjmp.h>
+#endif//I_CAN_HAS_LIBPNG
 static jmp_buf global_jump_buffer;
 #endif//IIO_ABORT_ON_ERROR
 
@@ -164,7 +164,7 @@ static jmp_buf global_jump_buffer;
 static const char *emptystring = "";
 static const char *myname(void)
 {
-#  define n 0x29a
+#define n 0x29a
 	static char buf[n];
 	pid_t p = getpid();
 	snprintf(buf, n, "/proc/%d/cmdline", p);
@@ -172,7 +172,7 @@ static const char *myname(void)
 	if (!f) return emptystring;
 	int c, i = 0;
 	while ((c = fgetc(f)) != EOF && i < n) {
-#  undef n
+#undef n
 		buf[i] = c ? c : ' ';
 		i += 1;
 	}

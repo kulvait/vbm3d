@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.9)
 project(multiscaler)
 
 # The build type "Release" adds some optimizations

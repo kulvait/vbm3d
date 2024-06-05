@@ -1,4 +1,7 @@
+cmake_minimum_required(VERSION 3.9)
 project(VBM3D)
+#set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_BUILD_TYPE Release)
 
 message(STATUS "Configuring main project: " ${CMAKE_PROJECT_NAME})
 
@@ -10,13 +13,25 @@ set(PROJECT_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT
     CACHE INTERNAL "The project version.")
 
 ###############################################################################
+# Set CFLAGS and CXXFLAGS
+###############################################################################
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
+set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0 -g -DDEBUG")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0 -g -DDEBUG")
+set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -DNDEBUG -w -s -ffast-math -fomit-frame-pointer -fstrength-reduce")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -DNDEBUG -w -s -ffast-math -fomit-frame-pointer -fstrength-reduce")
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -O3 -w -s -ffast-math -fomit-frame-pointer -fstrength-reduce")
+
+#set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -g")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -O3 -w -s -ffast-math -fomit-frame-pointer -fstrength-reduce")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -g -w -s -ffast-math -fomit-frame-pointer -fstrength-reduce")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -g -w -s -ffast-math -fomit-frame-pointer -fstrength-reduce")
+#set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -DNDEBUG")
+#set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0 -g -DDEBUG")
 
 ###############################################################################
 
-cmake_minimum_required(VERSION 2.8.2)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake/modules/")
 
 ###############################################################################

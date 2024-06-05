@@ -19,39 +19,37 @@
 
 #include "Utilities.h"
 
+#include <fstream>
+#include <iostream>
 #include <math.h>
 #include <omp.h>
-#include <iostream>
-#include <stdlib.h>
-#include <fstream>
-#include <string>
 #include <sstream>
+#include <stdlib.h>
+#include <string>
 
-#define YUV       0
-#define YCBCR     1
-#define OPP       2
-#define RGB       3
+#define YUV 0
+#define YCBCR 1
+#define OPP 2
+#define RGB 3
 
 using namespace std;
 
 /**
  * @brief Convenient function to use the sort function provided by the vector library.
  **/
-bool comparaisonFirst(
-	const pair<float, unsigned> &i_pair1
-,	const pair<float, unsigned> &i_pair2
-){
-	return i_pair1.first < i_pair2.first;
+bool comparaisonFirst(const pair<float, uint64_t>& i_pair1, const pair<float, uint64_t>& i_pair2)
+{
+    return i_pair1.first < i_pair2.first;
 }
 
 /**
- * @brief Convenient function to use the sort function provided by the vector library. Used to ocmpute the inverse order
+ * @brief Convenient function to use the sort function provided by the vector library. Used to
+ *ocmpute the inverse order
  **/
-bool comparaisonInverseFirst(
-	const pair<float, unsigned> &i_pair1
-,	const pair<float, unsigned> &i_pair2
-){
-	return i_pair1.first > i_pair2.first;
+bool comparaisonInverseFirst(const pair<float, uint64_t>& i_pair1,
+                             const pair<float, uint64_t>& i_pair2)
+{
+    return i_pair1.first > i_pair2.first;
 }
 
 /**
@@ -63,12 +61,9 @@ bool comparaisonInverseFirst(
  *
  * @return value clipped between [min, max].
  **/
-float clip(
-	const float i_value
-,	const float i_min
-,	const float i_max
-){
-	return (i_value < i_min ? i_min : (i_value > i_max ? i_max : i_value));
+float clip(const float i_value, const float i_min, const float i_max)
+{
+    return (i_value < i_min ? i_min : (i_value > i_max ? i_max : i_value));
 }
 
 /**
@@ -80,25 +75,27 @@ float clip(
  *
  * @return none.
  **/
-void centerData(
-	std::vector<float> &io_group3d
-,	std::vector<float> &o_baricenter
-,	const unsigned p_rows
-,	const unsigned p_cols
-){
-	const float inv = 1.f / (float) p_rows;
-	for (unsigned j = 0; j < p_cols; j++) {
-		float sum = 0.f;
-		for (unsigned i = 0; i < p_rows; i++) {
-			sum += io_group3d[j * p_rows + i];
-		}
+void centerData(std::vector<float>& io_group3d,
+                std::vector<float>& o_baricenter,
+                const uint64_t p_rows,
+                const uint64_t p_cols)
+{
+    const float inv = 1.f / (float)p_rows;
+    for(uint64_t j = 0; j < p_cols; j++)
+    {
+        float sum = 0.f;
+        for(uint64_t i = 0; i < p_rows; i++)
+        {
+            sum += io_group3d[j * p_rows + i];
+        }
 
-		o_baricenter[j] = sum * inv;
+        o_baricenter[j] = sum * inv;
 
-		for (unsigned i = 0; i < p_rows; i++) {
-			io_group3d[j * p_rows + i] -= o_baricenter[j];
-		}
-	}
+        for(uint64_t i = 0; i < p_rows; i++)
+        {
+            io_group3d[j * p_rows + i] -= o_baricenter[j];
+        }
+    }
 }
 
 /**
@@ -111,33 +108,35 @@ void centerData(
  *
  * @return the average standard deviation of the set
  **/
-float computeStdDeviation(
-	std::vector<float> const& i_Set
-,	const unsigned p_sP
-,	const unsigned p_nSimP
-,	const unsigned p_nChannels
-){
-	float sigma = 0.f;
+float computeStdDeviation(std::vector<float> const& i_Set,
+                          const uint64_t p_sP,
+                          const uint64_t p_nSimP,
+                          const uint64_t p_nChannels)
+{
+    float sigma = 0.f;
 
-	for (unsigned c = 0; c < p_nChannels; c++) {
-		//! Initialization
-		float mean = 0.f;
-		float std = 0.f;
+    for(uint64_t c = 0; c < p_nChannels; c++)
+    {
+        //! Initialization
+        float mean = 0.f;
+        float std = 0.f;
 
-		//! Compute the sum and the square sum
-		for (unsigned n = 0; n < p_nSimP; n++) {
-			for (unsigned k = 0; k < p_sP; k++) {
-				const float value = i_Set[k + c * p_sP + n * p_sP * p_nChannels];
-				mean += value;
-				std  += value * value;
-			}
-		}
+        //! Compute the sum and the square sum
+        for(uint64_t n = 0; n < p_nSimP; n++)
+        {
+            for(uint64_t k = 0; k < p_sP; k++)
+            {
+                const float value = i_Set[k + c * p_sP + n * p_sP * p_nChannels];
+                mean += value;
+                std += value * value;
+            }
+        }
 
-		//! Sample standard deviation (Bessel's correction)
-		sigma += (std - mean * mean / (float) (p_sP * p_nSimP)) / (float) (p_sP * p_nSimP - 1);
-	}
+        //! Sample standard deviation (Bessel's correction)
+        sigma += (std - mean * mean / (float)(p_sP * p_nSimP)) / (float)(p_sP * p_nSimP - 1);
+    }
 
-	return sigma / (float) p_nChannels;
+    return sigma / (float)p_nChannels;
 }
 
 /**
@@ -149,24 +148,22 @@ float computeStdDeviation(
  *
  * @return none.
  **/
-void determineFactor(
-    const unsigned i_n
-,   unsigned &o_a
-,   unsigned &o_b
-){
-    if (i_n == 1)
-	 {
+void determineFactor(const uint64_t i_n, uint64_t& o_a, uint64_t& o_b)
+{
+    if(i_n == 1)
+    {
         o_a = 1;
         o_b = 1;
         return;
     }
 
     o_b = 2;
-    while (i_n % o_b > 0) o_b++;
+    while(i_n % o_b > 0)
+        o_b++;
     o_a = i_n / o_b;
 
-    if (o_b > o_a)
-	 {
+    if(o_b > o_a)
+    {
         o_a = o_b;
         o_b = i_n / o_a;
     }
@@ -185,33 +182,35 @@ void determineFactor(
  *
  * @return EXIT_FAILURE if the file can't be opened.
  **/
-int writingMeasures(
-    const char* p_pathName
-,   const float p_sigma
-,   const float p_psnr
-,   const float p_rmse
-,   const float p_grps
-,   const float p_time
-,   const float p_cons
-,   const bool  p_truncateFile
-,   const char* p_app
-){
+int writingMeasures(const char* p_pathName,
+                    const float p_sigma,
+                    const float p_psnr,
+                    const float p_rmse,
+                    const float p_grps,
+                    const float p_time,
+                    const float p_cons,
+                    const bool p_truncateFile,
+                    const char* p_app)
+{
     //! Open the file
     ofstream file;
-    if (p_truncateFile) {
+    if(p_truncateFile)
+    {
         file.open(p_pathName, ios::out | ios::trunc);
-    }
-    else {
+    } else
+    {
         file.open(p_pathName, ios::out | ios::app);
     }
 
     //! Check if the file is open
-    if (!file) {
+    if(!file)
+    {
         return EXIT_FAILURE;
     }
 
     //! Write measures in the file
-    if (p_truncateFile) {
+    if(p_truncateFile)
+    {
         file << "************" << endl;
         file << "-sigma = " << p_sigma << endl;
         file << "************" << endl;
@@ -232,16 +231,15 @@ int writingMeasures(
 /**
  * @brief Check if a number is a power of 2
  **/
-bool power_of_2(
-    const unsigned n
-){
-    if (n == 0)
+bool power_of_2(const uint64_t n)
+{
+    if(n == 0)
         return false;
 
-    if (n == 1)
+    if(n == 1)
         return true;
 
-    if (n % 2 == 0)
+    if(n % 2 == 0)
         return power_of_2(n / 2);
     else
         return false;
@@ -254,11 +252,10 @@ bool power_of_2(
  *
  * @return the closest power of 2 lower or equal to n
  **/
-int closest_power_of_2(
-    const unsigned n
-){
-    unsigned r = 1;
-    while (r * 2 <= n)
+int closest_power_of_2(const uint64_t n)
+{
+    uint64_t r = 1;
+    while(r * 2 <= n)
         r *= 2;
 
     return r;
@@ -279,26 +276,26 @@ int closest_power_of_2(
  * @return EXIT_FAILURE if color_space has not expected
  *         type, otherwise return EXIT_SUCCESS.
  **/
-int estimate_sigma(
-    const float sigma
-,   std::vector<float> &sigma_table
-,   const unsigned chnls
-,   const unsigned color_space
-){
-    if (chnls == 1)
+int estimate_sigma(const float sigma,
+                   std::vector<float>& sigma_table,
+                   const uint64_t chnls,
+                   const uint64_t color_space)
+{
+    if(chnls == 1)
         sigma_table[0] = sigma;
     else
     {
-        if (color_space == YUV)
+        if(color_space == YUV)
         {
             //! Y
             sigma_table[0] = sqrtf(0.299f * 0.299f + 0.587f * 0.587f + 0.114f * 0.114f) * sigma;
             //! U
-            sigma_table[1] = sqrtf(0.14713f * 0.14713f + 0.28886f * 0.28886f + 0.436f * 0.436f) * sigma;
+            sigma_table[1]
+                = sqrtf(0.14713f * 0.14713f + 0.28886f * 0.28886f + 0.436f * 0.436f) * sigma;
             //! V
-            sigma_table[2] = sqrtf(0.615f * 0.615f + 0.51498f * 0.51498f + 0.10001f * 0.10001f) * sigma;
-        }
-        else if (color_space == YCBCR)
+            sigma_table[2]
+                = sqrtf(0.615f * 0.615f + 0.51498f * 0.51498f + 0.10001f * 0.10001f) * sigma;
+        } else if(color_space == YCBCR)
         {
             //! Y
             sigma_table[0] = sqrtf(0.299f * 0.299f + 0.587f * 0.587f + 0.114f * 0.114f) * sigma;
@@ -306,8 +303,7 @@ int estimate_sigma(
             sigma_table[1] = sqrtf(0.169f * 0.169f + 0.331f * 0.331f + 0.500f * 0.500f) * sigma;
             //! V
             sigma_table[2] = sqrtf(0.500f * 0.500f + 0.419f * 0.419f + 0.081f * 0.081f) * sigma;
-        }
-        else if (color_space == OPP)
+        } else if(color_space == OPP)
         {
             //! Y
             sigma_table[0] = sqrtf(0.333f * 0.333f + 0.333f * 0.333f + 0.333f * 0.333f) * sigma;
@@ -315,8 +311,7 @@ int estimate_sigma(
             sigma_table[1] = sqrtf(0.5f * 0.5f + 0.0f * 0.0f + 0.5f * 0.5f) * sigma;
             //! V
             sigma_table[2] = sqrtf(0.25f * 0.25f + 0.5f * 0.5f + 0.25f * 0.25f) * sigma;
-        }
-        else if (color_space == RGB)
+        } else if(color_space == RGB)
         {
             //! Y
             sigma_table[0] = sigma;
@@ -324,14 +319,12 @@ int estimate_sigma(
             sigma_table[1] = sigma;
             //! V
             sigma_table[2] = sigma;
-        }
-        else
+        } else
             return EXIT_FAILURE;
     }
 
     return EXIT_SUCCESS;
 }
-
 
 /**
  * @brief Initialize a 2D fftwf_plan with some parameters
@@ -343,19 +336,18 @@ int estimate_sigma(
  *
  * @return none.
  **/
-void allocate_plan_2d(
-    fftwf_plan* plan
-,   const unsigned N
-,   const fftwf_r2r_kind kind
-,   const unsigned nb
-){
-    int            nb_table[2]   = {(int)N, (int)N};
-    int            nembed[2]     = {(int)N, (int)N};
-    fftwf_r2r_kind kind_table[2] = {kind, kind};
+void allocate_plan_2d(fftwf_plan* plan,
+                      const uint64_t N,
+                      const fftwf_r2r_kind kind,
+                      const uint64_t nb)
+{
+    int nb_table[2] = { (int)N, (int)N };
+    int nembed[2] = { (int)N, (int)N };
+    fftwf_r2r_kind kind_table[2] = { kind, kind };
 
-    float* vec = (float*) fftwf_malloc(N * N * nb * sizeof(float));
-    (*plan) = fftwf_plan_many_r2r(2, nb_table, nb, vec, nembed, 1, N * N, vec,
-                                  nembed, 1, N * N, kind_table, FFTW_ESTIMATE);
+    float* vec = (float*)fftwf_malloc(N * N * nb * sizeof(float));
+    (*plan) = fftwf_plan_many_r2r(2, nb_table, nb, vec, nembed, 1, N * N, vec, nembed, 1, N * N,
+                                  kind_table, FFTW_ESTIMATE);
 
     fftwf_free(vec);
 }
@@ -370,19 +362,18 @@ void allocate_plan_2d(
  *
  * @return none.
  **/
-void allocate_plan_1d(
-    fftwf_plan* plan
-,   const unsigned N
-,   const fftwf_r2r_kind kind
-,   const unsigned nb
-){
-    int nb_table[] = {(int)N};
-    int nembed[]   = {(int)N};
-    fftwf_r2r_kind kind_table[1] = {kind};
+void allocate_plan_1d(fftwf_plan* plan,
+                      const uint64_t N,
+                      const fftwf_r2r_kind kind,
+                      const uint64_t nb)
+{
+    int nb_table[] = { (int)N };
+    int nembed[] = { (int)N };
+    fftwf_r2r_kind kind_table[1] = { kind };
 
-    float* vec = (float*) fftwf_malloc(N * nb * sizeof(float));
-    (*plan) = fftwf_plan_many_r2r(1, nb_table, nb, vec, nembed, 1, N, vec,
-                                  nembed, 1, N, kind_table, FFTW_ESTIMATE);
+    float* vec = (float*)fftwf_malloc(N * nb * sizeof(float));
+    (*plan) = fftwf_plan_many_r2r(1, nb_table, nb, vec, nembed, 1, N, vec, nembed, 1, N, kind_table,
+                                  FFTW_ESTIMATE);
 
     fftwf_free(vec);
 }
@@ -397,40 +388,37 @@ void allocate_plan_1d(
  *
  * @return none.
  **/
-void ind_initialize(
-    vector<unsigned> &ind_set
-,   const unsigned beginning 
-,   const unsigned end
-,   const unsigned step
-){
+void ind_initialize(vector<uint64_t>& ind_set,
+                    const uint64_t beginning,
+                    const uint64_t end,
+                    const uint64_t step)
+{
     ind_set.clear();
-    unsigned ind = beginning;
-    while (ind <= end)
+    uint64_t ind = beginning;
+    while(ind <= end)
     {
         ind_set.push_back(ind);
         ind += step;
     }
-    if (ind_set.back() < end)
+    if(ind_set.back() < end)
         ind_set.push_back(end);
 }
 
-void ind_initialize2(
-    vector<unsigned> &ind_set
-,   const unsigned max_size
-,   const unsigned N
-,   const unsigned step
-){
+void ind_initialize2(vector<uint64_t>& ind_set,
+                     const uint64_t max_size,
+                     const uint64_t N,
+                     const uint64_t step)
+{
     ind_set.clear();
-    unsigned ind = N;
-    while (ind < max_size - N)
+    uint64_t ind = N;
+    while(ind < max_size - N)
     {
         ind_set.push_back(ind);
         ind += step;
     }
-    if (ind_set.back() < max_size - N - 1)
+    if(ind_set.back() < max_size - N - 1)
         ind_set.push_back(max_size - N - 1);
 }
-
 
 /**
  * @brief For convenience. Estimate the size of the ind_set vector built
@@ -438,19 +426,16 @@ void ind_initialize2(
  *
  * @return size of ind_set vector built in ind_initialize().
  **/
-unsigned ind_size(
-    const unsigned beginning 
-,   const unsigned end
-,   const unsigned step
-){
-    unsigned ind = beginning;
-    unsigned k = 0;
-    while (ind <= end)
+uint64_t ind_size(const uint64_t beginning, const uint64_t end, const uint64_t step)
+{
+    uint64_t ind = beginning;
+    uint64_t k = 0;
+    while(ind <= end)
     {
         k++;
         ind += step;
     }
-    if (ind - step < end)
+    if(ind - step < end)
         k++;
 
     return k;
